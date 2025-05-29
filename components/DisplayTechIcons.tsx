@@ -1,4 +1,3 @@
-import React from 'react'
 import {cn, getTechLogos} from "@/lib/utils";
 import Image from 'next/image';
 
@@ -13,7 +12,7 @@ const DisplayTechIcons = async ({ techStack }: TechIconProps) => {
                 </div>
             )
     )}</div>
-    )
-}
+    );
+};
 
-export default DisplayTechIcons 
+export default DisplayTechIcons;

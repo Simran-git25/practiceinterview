@@ -3,9 +3,7 @@ import {google} from "@ai-sdk/google";
 import { getRandomInterviewCover } from "@/lib/utils";
 import { db } from "@/firebase/admin";
 
-export async function GET() {
-    return Response.json({ success: true, date: 'THANK YOU!'},{ status: 200});
-}
+
 export async function POST(request: Request){
     const { type, role, level, techstack, amount, userid }= await request.json();
 
@@ -27,20 +25,24 @@ export async function POST(request: Request){
             `,
         });
         const interview = {
-            role, type , level ,
+            role: role, type:type , level:level ,
             techstack: techstack.split(','),
             questions: JSON.parse(questions),
             userId: userid,
             finalized: true,
             coverImage: getRandomInterviewCover(),
-            createdAt: new Date().toISOString()
-        }
+            createdAt: new Date().toISOString(),
+        };
 
         await db.collection("interview").add(interview);
 
-        return Response.json({ success: true}, {status: 200})
+        return Response.json({ success: true}, {status: 200});
     } catch (error) {
         console.log(error);
-        return Response.json({ success: false, error }, { status: 500});
+        return Response.json({ success: false, error:error }, { status: 500});
     }
+}
+
+export async function GET() {
+    return Response.json({ success: true, date: 'THANK YOU!'},{ status: 200});
 }

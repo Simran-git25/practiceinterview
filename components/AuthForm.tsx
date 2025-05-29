@@ -8,9 +8,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
- import {
-  Form,
-} from "@/components/ui/form"
+ import { Form} from "@/components/ui/form"
 import { toast } from 'sonner';
 import FormField from './FormField';
 import { useRouter } from 'next/navigation';
@@ -40,51 +38,51 @@ const AuthForm = ({ type }: { type: FormType }) => {
       email:"",
       password:"",
     },
-  })
+  });
  
   // 2. Define a submit handler.
- async function onSubmit(values: z.infer<typeof formSchema>) {
+ const onSubmit = async(data: z.infer<typeof formSchema>) => {
  try{
 if(type === 'sign-up'){
-  const { name, email, password } = values;
+  const { name, email, password } = data;
   const userCredentials = await createUserWithEmailAndPassword(auth, email,password);
   const result = await signUp({
     uid: userCredentials.user.uid,
     name: name!,
     email,
     password,
-  })
+  });
 
-  if(!result?.success) {
-    toast.error(result?.message);
+  if(!result.success) {
+    toast.error(result.message);
     return;
   }
   toast.success('Account created successfully.Please sign in.');
  router.push('/sign-in')
 }else{
-  const { email, password } = values;
+  const { email, password } = data;
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
   const idToken = await userCredential.user.getIdToken();
 
   if(!idToken){
-    toast.error('Sign in failed.');
+    toast.error('Sign in failed.Please try again.');
     return;
   }
 
   await signIn({
-    email, idToken
-  })
+    email, idToken,
+  });
 
    toast.success('Sign in  successfully .');
  router.push('/')
 }
  }catch( error){
   console.log(error);
-  toast.error(`There was an error: ${error}`)
+  toast.error(`There was an error: ${error}`);
  }
  
-  }
+  };
   
   const isSignIn = type === 'sign-in';
     return(
@@ -98,17 +96,20 @@ if(type === 'sign-up'){
          
            <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 mt-4 form">
-    {!isSignIn && <FormField control={form.control} 
+    {!isSignIn && (
+      <FormField control={form.control} 
     name="name" 
     label="Name" 
     placeholder="Your Name"
+    type="text"
      />
-    }
+    )}
 
     <FormField control={form.control} 
     name="email" 
     label="Email" 
-    placeholder="Your email address" />
+    placeholder="Your email address" 
+    type="email"/>
 
    <FormField control={form.control} 
     name="password" 
@@ -129,6 +130,6 @@ if(type === 'sign-up'){
     </p>
     </div>
      </div>
-    )
-}
-export default AuthForm
+    );
+};
+export default AuthForm;
